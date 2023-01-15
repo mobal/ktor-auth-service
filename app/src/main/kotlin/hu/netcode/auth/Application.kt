@@ -1,7 +1,5 @@
 package hu.netcode.auth
 
-import hu.netcode.auth.dto.Error as ErrorDto
-import hu.netcode.auth.dto.Login as LoginDto
 import hu.netcode.auth.repository.UserNotFoundException
 import hu.netcode.auth.repository.UserRepository
 import hu.netcode.auth.repository.UserTypeConverter
@@ -31,6 +29,8 @@ import org.koin.ktor.ext.inject
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder
+import hu.netcode.auth.dto.Error as ErrorDto
+import hu.netcode.auth.dto.Login as LoginDto
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -39,29 +39,34 @@ fun Application.module() {
     install(CallId)
     install(CallLogging)
     install(ContentNegotiation) {
-        json(Json {
-            isLenient = true
-            prettyPrint = true
-        })
+        json(
+            Json {
+                isLenient = true
+                prettyPrint = true
+            }
+        )
     }
     install(Koin) {
         slf4jLogger(level = Level.DEBUG)
-        modules(module {
-            single { Argon2PasswordEncoder(16, 32, 4, 65536, 3) }
-            single { AuthService(get(), get(), environment.config.property("jwt.secret").getString(), get()) }
-            single { CacheService(environment.config.property("cache.baseUrl").getString()) }
-            single { UserRepository(environment.config.property("aws.stage").getString(), get()) }
-            single { UserTypeConverter() }
-            single { Validation.buildDefaultValidatorFactory().validator}
-        })
+        modules(
+            module {
+                single { Argon2PasswordEncoder(16, 32, 4, 65536, 3) }
+                single { AuthService(get(), get(), environment.config.property("jwt.secret").getString(), get()) }
+                single { CacheService(environment.config.property("cache.baseUrl").getString()) }
+                single { UserRepository(environment.config.property("aws.stage").getString(), get()) }
+                single { UserTypeConverter() }
+                single { Validation.buildDefaultValidatorFactory().validator }
+            }
+        )
     }
     install(RequestValidation) {
         val validator by inject<Validator>()
         validate<LoginDto> {
             validator.validate(it).takeIf { violations -> violations.isNotEmpty() }
-                    ?.let { violations ->
-                        ValidationResult.Invalid(violations.map { violation -> violation.message }) }
-                    ?: ValidationResult.Valid
+                ?.let { violations ->
+                    ValidationResult.Invalid(violations.map { violation -> violation.message })
+                }
+                ?: ValidationResult.Valid
         }
     }
     install(StatusPages) {
@@ -69,34 +74,38 @@ fun Application.module() {
             when (cause) {
                 is BadRequestException -> {
                     call.respondText(
-                            text = Json.encodeToString(
-                                    ErrorDto(message = cause.let { cause.message } ?: "Bad Request")),
-                            contentType = ContentType.Application.Json,
-                            status = HttpStatusCode.BadRequest
+                        text = Json.encodeToString(
+                            ErrorDto(message = cause.let { cause.message } ?: "Bad Request")
+                        ),
+                        contentType = ContentType.Application.Json,
+                        status = HttpStatusCode.BadRequest
                     )
                 }
                 is RequestValidationException -> {
                     call.respondText(
-                            text = Json.encodeToString(
-                                    ErrorDto(message = cause.reasons.joinToString())),
-                            contentType = ContentType.Application.Json,
-                            status = HttpStatusCode.BadRequest
+                        text = Json.encodeToString(
+                            ErrorDto(message = cause.reasons.joinToString())
+                        ),
+                        contentType = ContentType.Application.Json,
+                        status = HttpStatusCode.BadRequest
                     )
                 }
                 is UnauthorizedException -> {
                     call.respondText(
-                            text = Json.encodeToString(
-                                    ErrorDto(message = cause.let { cause.message } ?: "Unauthorized")),
-                            contentType = ContentType.Application.Json,
-                            status = HttpStatusCode.Unauthorized
+                        text = Json.encodeToString(
+                            ErrorDto(message = cause.let { cause.message } ?: "Unauthorized")
+                        ),
+                        contentType = ContentType.Application.Json,
+                        status = HttpStatusCode.Unauthorized
                     )
                 }
                 is UserNotFoundException -> {
                     call.respondText(
-                            text = Json.encodeToString(
-                                    ErrorDto(message = cause.let { cause.message } ?: "Not Found")),
-                            contentType = ContentType.Application.Json,
-                            status = HttpStatusCode.NotFound
+                        text = Json.encodeToString(
+                            ErrorDto(message = cause.let { cause.message } ?: "Not Found")
+                        ),
+                        contentType = ContentType.Application.Json,
+                        status = HttpStatusCode.NotFound
                     )
                 }
                 else -> {
@@ -118,14 +127,13 @@ fun Application.module() {
                     val login = call.receive<LoginDto>()
                     call.respond(mapOf("token" to service.login(login.email!!, login.password!!)))
                 }
-
             }
             route("/logout", HttpMethod.Get) {
                 handle {
                     call.request.headers["Authorization"]?.let {
-                        service.logout(it.substring(it.indexOf(' ') + 1))
+                        service.logout(it)
+                        call.response.status(value = HttpStatusCode.NoContent)
                     }
-                    call.response.status(value = HttpStatusCode.NoContent)
                 }
             }
         }

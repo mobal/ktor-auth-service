@@ -7,10 +7,10 @@ import org.hibernate.validator.constraints.Length
 
 @Serializable
 data class Login(
-        @field:NotBlank
-        @field:Email
-        val email: String? = null,
-        @field:NotBlank
-        @field:Length(min = 3)
-        val password: String? = null,
+    @field:NotBlank
+    @field:Email
+    val email: String? = null,
+    @field:NotBlank
+    @field:Length(min = 3)
+    val password: String? = null,
 )

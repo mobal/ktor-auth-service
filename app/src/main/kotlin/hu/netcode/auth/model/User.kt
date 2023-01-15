@@ -12,41 +12,40 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
 object RoleSerializer : KSerializer<Role> {
-        override val descriptor: SerialDescriptor
-                get() = PrimitiveSerialDescriptor("Role", PrimitiveKind.STRING)
+    override val descriptor: SerialDescriptor
+        get() = PrimitiveSerialDescriptor("Role", PrimitiveKind.STRING)
 
-        override fun deserialize(decoder: Decoder): Role {
-                return Role.values().first {
-                        it.role == decoder.decodeString()
-                }
+    override fun deserialize(decoder: Decoder): Role {
+        return Role.values().first {
+            it.role == decoder.decodeString()
         }
+    }
 
-        override fun serialize(encoder: Encoder, value: Role) {
-                encoder.encodeString(value.role)
-        }
-
+    override fun serialize(encoder: Encoder, value: Role) {
+        encoder.encodeString(value.role)
+    }
 }
 
 @Serializable(with = RoleSerializer::class)
 enum class Role(val role: String) {
-        PostCreate("post:create"),
-        PostDelete("post:delete"),
-        PostEdit("post:edit")
+    PostCreate("post:create"),
+    PostDelete("post:delete"),
+    PostEdit("post:edit")
 }
 
 @Serializable
 data class User(
-        val id: String,
-        val displayName: String,
-        val email: String,
-        @Transient
-        val password: String? = null,
-        val roles: List<Role>,
-        val username: String,
-        @Contextual
-        val createdAt: LocalDateTime,
-        @Contextual
-        val deletedAt: LocalDateTime?,
-        @Contextual
-        val updatedAt: LocalDateTime?
+    val id: String,
+    val displayName: String,
+    val email: String,
+    @Transient
+    val password: String? = null,
+    val roles: List<Role>,
+    val username: String,
+    @Contextual
+    val createdAt: LocalDateTime,
+    @Contextual
+    val deletedAt: LocalDateTime?,
+    @Contextual
+    val updatedAt: LocalDateTime?
 )

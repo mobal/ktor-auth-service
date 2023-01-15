@@ -15,31 +15,33 @@ import org.slf4j.LoggerFactory
 
 @Serializable
 data class CacheRequest(
-        val key: String,
-        val value: String,
-        val ttl: Int
+    val key: String,
+    val value: String,
+    val ttl: Int
 )
 
 class CacheService(
-        private val baseUrl: String
+    private val baseUrl: String
 ) {
     private val httpClient = HttpClient(OkHttp) {
         install(ContentNegotiation) {
-            json(Json {
-                prettyPrint = true
-                isLenient = true
-            })
+            json(
+                Json {
+                    prettyPrint = true
+                    isLenient = true
+                }
+            )
         }
         install(Logging)
     }
     private val logger: Logger = LoggerFactory.getLogger(CacheService::class.java)
 
     suspend fun get(key: String): Boolean {
-        val response = httpClient.get("$baseUrl/api/cache/$key")
+        val response = httpClient.get("$baseUrl/api/cache/jti_$key")
         if (response.status.value in 200..299) {
             return true
         } else if (response.status.value == HttpStatusCode.NotFound.value) {
-            logger.debug("Cache was not found for $key")
+            logger.debug("Cache was not found for jti_$key")
             return false
         }
         throw ResponseException(response, "Internal Server Error")

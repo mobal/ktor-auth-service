@@ -12,7 +12,6 @@ repositories {
 
 dependencies {
     implementation("com.amazonaws:aws-java-sdk:1.12.384")
-    implementation("io.github.cdimascio:dotenv-kotlin:6.4.0")
     implementation("io.insert-koin:koin-ktor:3.3.0")
     implementation("io.insert-koin:koin-logger-slf4j:3.3.0")
     implementation("io.ktor:ktor-client-content-negotiation:2.2.2")
