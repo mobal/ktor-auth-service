@@ -1,9 +1,16 @@
 ktor:
-  deployment:
-    port: 8080
   application:
     modules:
       - hu.netcode.auth.ApplicationKt.module
-
+  deployment:
+    port: $PORT
+    watch:
+      - classes
+      - resources
+  development: $DEV
+aws:
+  stage: "$STAGE:dev"
 jwt:
-  secret: secret
+  secret: $JWT_SECRET
+cache:
+  baseUrl: $CACHE_SERVICE_BASE_URL
