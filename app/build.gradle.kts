@@ -1,4 +1,5 @@
 plugins {
+    id("com.github.johnrengelman.shadow") version "7.1.2"
     id("org.jetbrains.kotlin.jvm") version "1.8.0"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.0"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
@@ -44,12 +45,22 @@ application {
     mainClass.set("io.ktor.server.netty.EngineMain")
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
 ktlint {
     disabledRules.set(setOf("no-wildcard-imports"))
 }
 
+tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+    minimize()
+}
+
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_19.toString()
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 }
