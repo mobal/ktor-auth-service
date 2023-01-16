@@ -37,13 +37,16 @@ class CacheService(
     private val logger: Logger = LoggerFactory.getLogger(CacheService::class.java)
 
     suspend fun get(key: String): Boolean {
-        val response = httpClient.get("$baseUrl/api/cache/jti_$key")
+        val url = "$baseUrl/api/cache/$key"
+        logger.debug("Get cache for $key, $url")
+        val response = httpClient.get(url)
         if (response.status.value in 200..299) {
             return true
         } else if (response.status.value == HttpStatusCode.NotFound.value) {
-            logger.debug("Cache was not found for jti_$key")
+            logger.debug("Cache was not found for $key")
             return false
         }
+        logger.error("Unexpected error $response")
         throw ResponseException(response, "Internal Server Error")
     }
 

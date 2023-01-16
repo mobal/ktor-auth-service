@@ -28,14 +28,17 @@ import org.koin.dsl.module
 import org.koin.ktor.ext.inject
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder
 import hu.netcode.auth.dto.Error as ErrorDto
 import hu.netcode.auth.dto.Login as LoginDto
 
+val logger: Logger = LoggerFactory.getLogger(Application::class.java)
+
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 fun Application.module() {
-    install(Authentication)
     install(CallId)
     install(CallLogging)
     install(ContentNegotiation) {
@@ -71,6 +74,7 @@ fun Application.module() {
     }
     install(StatusPages) {
         exception<Throwable> { call, cause ->
+            logger.error("${cause.javaClass.canonicalName}: ${cause.message}", cause)
             when (cause) {
                 is BadRequestException -> {
                     call.respondText(
