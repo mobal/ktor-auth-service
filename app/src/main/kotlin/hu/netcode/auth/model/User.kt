@@ -35,7 +35,8 @@ enum class Role(val role: String) {
 
 @Serializable
 data class User(
-    val id: String,
+    @Transient
+    val id: String? = null,
     val displayName: String,
     val email: String,
     @Transient
@@ -43,9 +44,12 @@ data class User(
     val roles: List<Role>,
     val username: String,
     @Contextual
-    val createdAt: LocalDateTime,
+    @Transient
+    val createdAt: LocalDateTime? = null,
     @Contextual
-    val deletedAt: LocalDateTime?,
+    @Transient
+    val deletedAt: LocalDateTime? = null,
     @Contextual
-    val updatedAt: LocalDateTime?
+    @Transient
+    val updatedAt: LocalDateTime? = null
 )

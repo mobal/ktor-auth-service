@@ -1,7 +1,7 @@
 ktor:
   application:
     modules:
-      - hu.netcode.auth.ApplicationKt.module
+      - hu.netcode.auth.ApplicationKt.main
   deployment:
     port: $PORT
     watch:
