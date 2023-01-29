@@ -5,6 +5,7 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
     application
     idea
+    jacoco
 }
 
 repositories {
@@ -30,6 +31,8 @@ dependencies {
     implementation("io.ktor:ktor-server-metrics-micrometer:2.2.2")
     implementation("io.ktor:ktor-server-request-validation:2.2.2")
     implementation("io.ktor:ktor-server-status-pages:2.2.2")
+    implementation("io.kotless:kotless-lang:0.2.0")
+    implementation("io.kotless:kotless-lang-aws:0.2.0")
     implementation("org.apache.logging.log4j:log4j-api:2.19.0'")
     implementation("org.apache.logging.log4j:log4j-core:2.19.0")
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.19.0")
@@ -39,10 +42,18 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
     implementation("org.springframework.security:spring-security-crypto:6.0.1")
     testImplementation("io.insert-koin:koin-test:3.3.2")
+    testImplementation("io.ktor:ktor-server-test-host:2.2.2")
+    testImplementation(kotlin("test"))
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.8.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
 }
 
 application {
     mainClass.set("io.ktor.server.netty.EngineMain")
+}
+
+jacoco {
+    toolVersion = "0.8.8"
 }
 
 java {
@@ -53,6 +64,15 @@ java {
 
 ktlint {
     disabledRules.set(setOf("no-wildcard-imports"))
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport)
+    useJUnitPlatform()
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
