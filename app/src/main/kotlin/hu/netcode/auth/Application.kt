@@ -9,7 +9,7 @@ import hu.netcode.auth.service.UnauthorizedException
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
-import io.ktor.server.auth.*
+import io.ktor.server.netty.*
 import io.ktor.server.plugins.*
 import io.ktor.server.plugins.callid.*
 import io.ktor.server.plugins.callloging.*
@@ -36,9 +36,9 @@ import hu.netcode.auth.dto.Login as LoginDto
 
 val logger: Logger = LoggerFactory.getLogger(Application::class.java)
 
-fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
+fun main(args: Array<String>): Unit = EngineMain.main(args)
 
-fun Application.module() {
+fun Application.main() {
     install(CallId)
     install(CallLogging)
     install(ContentNegotiation) {
