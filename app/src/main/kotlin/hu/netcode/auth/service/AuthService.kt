@@ -36,15 +36,11 @@ class AuthService(
     }
 
     private suspend fun validateToken(decodedJWT: DecodedJWT): Boolean {
-        if ((Clock.System.now().toEpochMilliseconds() < decodedJWT.expiresAt.time) &&
-            !cacheService.get("jti_${decodedJWT.id}")
-        ) {
-            return true
-        }
-        return false
+        return (Clock.System.now().toEpochMilliseconds() < decodedJWT.expiresAt.time) &&
+                !cacheService.get("jti_${decodedJWT.id}")
     }
 
-    suspend fun login(email: String, password: String): String {
+    fun login(email: String, password: String): String {
         val user: User? = userRepository.getByEmail(email)
         return user?.let {
             if (!argon2PasswordEncoder.matches(password, it.password)) {

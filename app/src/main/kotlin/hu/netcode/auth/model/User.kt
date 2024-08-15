@@ -16,7 +16,7 @@ object RoleSerializer : KSerializer<Role> {
         get() = PrimitiveSerialDescriptor("Role", PrimitiveKind.STRING)
 
     override fun deserialize(decoder: Decoder): Role {
-        return Role.values().first {
+        return Role.entries.first {
             it.role == decoder.decodeString()
         }
     }
