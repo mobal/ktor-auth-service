@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm") version "2.0.10"
     id("org.jetbrains.kotlin.plugin.serialization") version "2.0.10"
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
+    id("org.sonarqube") version "4.4.1.3373"
     application
     idea
     jacoco
@@ -57,6 +58,14 @@ jacoco {
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(22))
+    }
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "mobal_ktor-auth-service")
+        property("sonar.organization", "mobal")
+        property("sonar.host.url", "https://sonarcloud.io")
     }
 }
 
