@@ -21,7 +21,10 @@ object RoleSerializer : KSerializer<Role> {
         }
     }
 
-    override fun serialize(encoder: Encoder, value: Role) {
+    override fun serialize(
+        encoder: Encoder,
+        value: Role,
+    ) {
         encoder.encodeString(value.role)
     }
 }
@@ -30,7 +33,7 @@ object RoleSerializer : KSerializer<Role> {
 enum class Role(val role: String) {
     PostCreate("post:create"),
     PostDelete("post:delete"),
-    PostEdit("post:edit")
+    PostEdit("post:edit"),
 }
 
 @Serializable
@@ -51,5 +54,5 @@ data class User(
     val deletedAt: LocalDateTime? = null,
     @Contextual
     @Transient
-    val updatedAt: LocalDateTime? = null
+    val updatedAt: LocalDateTime? = null,
 )

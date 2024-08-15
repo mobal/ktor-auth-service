@@ -46,7 +46,7 @@ fun Application.main() {
             Json {
                 isLenient = true
                 prettyPrint = true
-            }
+            },
         )
     }
     install(Koin) {
@@ -59,7 +59,7 @@ fun Application.main() {
                 single { UserRepository(environment.config.property("aws.stage").getString(), get()) }
                 single { UserTypeConverter() }
                 single { Validation.buildDefaultValidatorFactory().validator }
-            }
+            },
         )
     }
     install(RequestValidation) {
@@ -78,38 +78,42 @@ fun Application.main() {
             when (cause) {
                 is BadRequestException -> {
                     call.respondText(
-                        text = Json.encodeToString(
-                            ErrorDto(message = cause.let { cause.message } ?: "Bad Request")
-                        ),
+                        text =
+                            Json.encodeToString(
+                                ErrorDto(message = cause.let { cause.message } ?: "Bad Request"),
+                            ),
                         contentType = ContentType.Application.Json,
-                        status = HttpStatusCode.BadRequest
+                        status = HttpStatusCode.BadRequest,
                     )
                 }
                 is RequestValidationException -> {
                     call.respondText(
-                        text = Json.encodeToString(
-                            ErrorDto(message = cause.reasons.joinToString())
-                        ),
+                        text =
+                            Json.encodeToString(
+                                ErrorDto(message = cause.reasons.joinToString()),
+                            ),
                         contentType = ContentType.Application.Json,
-                        status = HttpStatusCode.BadRequest
+                        status = HttpStatusCode.BadRequest,
                     )
                 }
                 is UnauthorizedException -> {
                     call.respondText(
-                        text = Json.encodeToString(
-                            ErrorDto(message = cause.let { cause.message } ?: "Unauthorized")
-                        ),
+                        text =
+                            Json.encodeToString(
+                                ErrorDto(message = cause.let { cause.message } ?: "Unauthorized"),
+                            ),
                         contentType = ContentType.Application.Json,
-                        status = HttpStatusCode.Unauthorized
+                        status = HttpStatusCode.Unauthorized,
                     )
                 }
                 is UserNotFoundException -> {
                     call.respondText(
-                        text = Json.encodeToString(
-                            ErrorDto(message = cause.let { cause.message } ?: "Not Found")
-                        ),
+                        text =
+                            Json.encodeToString(
+                                ErrorDto(message = cause.let { cause.message } ?: "Not Found"),
+                            ),
                         contentType = ContentType.Application.Json,
-                        status = HttpStatusCode.NotFound
+                        status = HttpStatusCode.NotFound,
                     )
                 }
                 else -> {

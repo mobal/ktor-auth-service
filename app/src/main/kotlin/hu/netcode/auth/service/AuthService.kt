@@ -6,7 +6,9 @@ import com.auth0.jwt.interfaces.DecodedJWT
 import hu.netcode.auth.model.User
 import hu.netcode.auth.repository.UserNotFoundException
 import hu.netcode.auth.repository.UserRepository
-import kotlinx.datetime.*
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.plus
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.slf4j.Logger
@@ -20,7 +22,7 @@ class AuthService(
     private val argon2PasswordEncoder: Argon2PasswordEncoder,
     private val cacheService: CacheService,
     private val jwtSecret: String,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 ) {
     private val logger: Logger = LoggerFactory.getLogger(AuthService::class.java)
 
@@ -37,10 +39,13 @@ class AuthService(
 
     private suspend fun validateToken(decodedJWT: DecodedJWT): Boolean {
         return (Clock.System.now().toEpochMilliseconds() < decodedJWT.expiresAt.time) &&
-                !cacheService.get("jti_${decodedJWT.id}")
+            !cacheService.get("jti_${decodedJWT.id}")
     }
 
-    fun login(email: String, password: String): String {
+    fun login(
+        email: String,
+        password: String,
+    ): String {
         val user: User? = userRepository.getByEmail(email)
         return user?.let {
             if (!argon2PasswordEncoder.matches(password, it.password)) {
@@ -54,8 +59,9 @@ class AuthService(
         val decodedJWT: DecodedJWT = JWT.decode(token.substring(token.indexOf(' ') + 1))
         if (validateToken(decodedJWT)) {
             cacheService.put(
-                "jti_${decodedJWT.id}", decodedJWT.subject,
-                (decodedJWT.expiresAt.time / 1000).toInt()
+                "jti_${decodedJWT.id}",
+                decodedJWT.subject,
+                (decodedJWT.expiresAt.time / 1000).toInt(),
             )
         } else {
             throw UnauthorizedException()

@@ -7,5 +7,5 @@ import java.util.UUID
 data class Error(
     val id: String = UUID.randomUUID().toString(),
     val message: String,
-    val status: Int? = null
+    val status: Int? = null,
 )
