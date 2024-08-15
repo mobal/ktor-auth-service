@@ -1,7 +1,7 @@
 package hu.netcode.auth.dto
 
-import kotlinx.serialization.Serializable
 import java.util.UUID
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class Error(

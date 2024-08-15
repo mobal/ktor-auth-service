@@ -76,7 +76,9 @@ class UserRepository(
                 ScanRequest()
                     .withTableName("$stage-users")
                     .withFilterExpression("#DELETED_AT = :deletedAt AND #EMAIL = :email")
-                    .withExpressionAttributeNames(mapOf("#DELETED_AT" to "deleted_at", "#EMAIL" to "email"))
+                    .withExpressionAttributeNames(
+                        mapOf("#DELETED_AT" to "deleted_at", "#EMAIL" to "email"),
+                    )
                     .withExpressionAttributeValues(
                         mapOf(
                             ":deletedAt" to AttributeValue().withNULL(true),

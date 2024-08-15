@@ -54,9 +54,21 @@ fun Application.main() {
         modules(
             module {
                 single { Argon2PasswordEncoder(16, 32, 4, 65536, 3) }
-                single { AuthService(get(), get(), environment.config.property("jwt.secret").getString(), get()) }
+                single {
+                    AuthService(
+                        get(),
+                        get(),
+                        environment.config.property("jwt.secret").getString(),
+                        get(),
+                    )
+                }
                 single { CacheService(environment.config.property("cache.baseUrl").getString()) }
-                single { UserRepository(environment.config.property("aws.stage").getString(), get()) }
+                single {
+                    UserRepository(
+                        environment.config.property("aws.stage").getString(),
+                        get(),
+                    )
+                }
                 single { UserTypeConverter() }
                 single { Validation.buildDefaultValidatorFactory().validator }
             },

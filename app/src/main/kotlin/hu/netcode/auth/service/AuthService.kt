@@ -6,6 +6,7 @@ import com.auth0.jwt.interfaces.DecodedJWT
 import hu.netcode.auth.model.User
 import hu.netcode.auth.repository.UserNotFoundException
 import hu.netcode.auth.repository.UserRepository
+import java.util.*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.plus
@@ -14,7 +15,6 @@ import kotlinx.serialization.json.Json
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder
-import java.util.*
 
 class UnauthorizedException(message: String = "Unauthorized") : Exception(message)
 
