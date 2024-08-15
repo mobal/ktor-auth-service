@@ -1,5 +1,5 @@
 plugins {
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.gradleup.shadow") version "8.3.0"
     id("org.jetbrains.kotlin.jvm") version "2.0.10"
     id("org.jetbrains.kotlin.plugin.serialization") version "2.0.10"
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
@@ -63,6 +63,7 @@ java {
 
 sonar {
     properties {
+        property("sonar.gradle.skipCompile", true)
         property("sonar.projectKey", "mobal_ktor-auth-service")
         property("sonar.organization", "mobal")
         property("sonar.host.url", "https://sonarcloud.io")
@@ -78,7 +79,9 @@ tasks.test {
     useJUnitPlatform()
 }
 
-tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+tasks.shadowJar {
+    isEnableRelocation = true
+    isZip64 = true
     minimize()
 }
 
