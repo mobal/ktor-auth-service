@@ -46,7 +46,7 @@ class UserTypeConverter : DynamoDBTypeConverter<Map<String, AttributeValue>, Use
             `object`["display_name"]!!.s,
             `object`["email"]!!.s,
             `object`["password"]!!.s,
-            `object`["roles"]!!.l.map { Role.values().first { role -> role.role == it.s } },
+            `object`["roles"]!!.l.map { Role.entries.first { role -> role.role == it.s } },
             `object`["username"]!!.s,
             Instant.parse(`object`["created_at"]!!.s).toLocalDateTime(TimeZone.UTC),
             if (`object`["deleted_at"]!!.isNULL == null) {
