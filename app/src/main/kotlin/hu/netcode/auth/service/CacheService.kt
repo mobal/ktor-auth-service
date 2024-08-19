@@ -17,23 +17,24 @@ import org.slf4j.LoggerFactory
 data class CacheRequest(
     val key: String,
     val value: String,
-    val ttl: Int
+    val ttl: Int,
 )
 
 class CacheService(
-    private val baseUrl: String
+    private val baseUrl: String,
 ) {
-    private val httpClient = HttpClient(OkHttp) {
-        install(ContentNegotiation) {
-            json(
-                Json {
-                    prettyPrint = true
-                    isLenient = true
-                }
-            )
+    private val httpClient =
+        HttpClient(OkHttp) {
+            install(ContentNegotiation) {
+                json(
+                    Json {
+                        prettyPrint = true
+                        isLenient = true
+                    },
+                )
+            }
+            install(Logging)
         }
-        install(Logging)
-    }
     private val logger: Logger = LoggerFactory.getLogger(CacheService::class.java)
 
     suspend fun get(key: String): Boolean {
@@ -50,11 +51,16 @@ class CacheService(
         throw ResponseException(response, "Internal Server Error")
     }
 
-    suspend fun put(key: String, value: String, ttl: Int = 0): Boolean {
-        val response = httpClient.post("$baseUrl/api/cache") {
-            contentType(ContentType.Application.Json)
-            setBody(CacheRequest(key, value, ttl))
-        }
+    suspend fun put(
+        key: String,
+        value: String,
+        ttl: Int = 0,
+    ): Boolean {
+        val response =
+            httpClient.post("$baseUrl/api/cache") {
+                contentType(ContentType.Application.Json)
+                setBody(CacheRequest(key, value, ttl))
+            }
         if (response.status.value == HttpStatusCode.Created.value) {
             logger.info("Cache successfully created $key, $value and $ttl")
             return true
