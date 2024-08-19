@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.amazonaws:aws-java-sdk:1.12.769")
+    implementation("com.amazonaws:aws-java-sdk:${project.property("awsSdkVersion")}")
     implementation("io.insert-koin:koin-ktor:${project.property("koinVersion")}")
     implementation("io.insert-koin:koin-logger-slf4j:${project.property("koinVersion")}")
     implementation("io.ktor:ktor-client-content-negotiation:${project.property("ktorVersion")}")
